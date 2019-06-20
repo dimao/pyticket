@@ -1,5 +1,6 @@
 import sys
 import logging
+import arrow
 from datetime import datetime
 from datetime import timedelta
 from wsgiref.simple_server import make_server
@@ -43,13 +44,13 @@ class TicketsHandler(PatternMatchingEventHandler):
     next_game_place = ''
     event_code = ''
     event_name = ''
-    next_game_datetime = datetime.now()
+    next_game_datetime = arrow.utcnow().format('YYYY-MM-DD HH:mm:ss')
     logger.info(f'Initial next_game_datetime: \033[1m{next_game_datetime}\033[0m')
 
     @SCRAPE_REQUEST_TIME.time()
     def scrape(self):
-        # scrape = Scrape("ru_RU", 'https://fcbate.by/fan-zone')
-        scrape = Scrape("ru_RU", 'http://localhost')
+        scrape = Scrape('https://fcbate.by/fan-zone')
+        # scrape = Scrape("ru_RU.UTF-8", 'http://dimao')
         self.next_game_datetime = scrape.next_game_datetime
         self.session_start = scrape.get_session_start()
         self.session_end = scrape.get_session_end()
@@ -94,15 +95,19 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     if args:
         path = args[0]
+        # scrape_interval = args[1]
+        # print(path)
+        # print(scrape_interval)
     else:
         path = '.'
+        # scrape_interval = 3600
 
     observer = Observer()
     tickets_handler = TicketsHandler()
     timeloop = Timeloop()
 
 
-    @timeloop.job(interval=timedelta(seconds=10))  # scraping interval
+    @timeloop.job(interval=timedelta(seconds=int(10)))  # scraping interval
     def timeloop_job():
         tickets_handler.scrape()
 
@@ -110,7 +115,7 @@ if __name__ == '__main__':
     timeloop.start()  # start timeloop thread
 
     observer.schedule(tickets_handler, path=path, recursive=False)
-    tickets_handler.logger.info(f'Monitoring {path} directory')
+    tickets_handler.logger.info(f'Monitoring {path} directory with seconds interval')
     observer.start()
 
     metrics_app = make_wsgi_app()
