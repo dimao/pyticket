@@ -1,5 +1,5 @@
 import logging
-import sys
+
 from zeep import Client
 
 
@@ -8,22 +8,14 @@ class ImportTicket:
         self.wsdl = wsdl
         self.transport = transport
         self.settings = settings
-        logger = logging.getLogger('import_ticket')
-        ch = logging.StreamHandler(sys.stdout)
-        ch.setLevel(logging.INFO)
-        formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
-        ch.setFormatter(formatter)
-        logger.addHandler(ch)
-        logger.setLevel(logging.INFO)
+        logger = logging.getLogger('handler')
         self.logger = logger
 
         try:
             self.client = Client(wsdl, transport=transport, settings=settings)
-            get_current_version = self.client.service.GetCurrentVersion()  # check wsdl connection
-            if get_current_version == '1.0.1.0':
-                self.logger.info(f'Current version: {get_current_version}')
+            logger.info(f'Current version: {self.client.service.GetCurrentVersion()}')
         except ConnectionError:
-            self.logger.critical(f'Invalid ISDImportTicketService version, must be 1.0.1.0')
+            self.logger.critical(f'Can\'t connect to {self.wsdl}')
 
     def get_client(self):
         return self.client
@@ -38,7 +30,3 @@ class ImportTicket:
                                                sessionEnd=session_end, eventName=event_name)
         self.client.service.ActivateTicket(barcode_.rstrip(), eventCode=int(event_code))
         return self.logger.info(import_ticket_result)
-
-    @staticmethod
-    def mock(barcode_):
-        print(f'mock bar: {barcode_}')
