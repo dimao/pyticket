@@ -4,4 +4,4 @@ COPY ./pyticket /pyticket
 COPY requirements.txt /
 RUN pip3 install -r requirements.txt
 WORKDIR /
-CMD ["/usr/local/bin/python3 pyticket"]
+CMD ["/usr/local/bin/python3",  "pyticket"]

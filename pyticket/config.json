@@ -8,7 +8,7 @@
   },
   "game": {
     "time_shift": 2,
-    "folder": "/Users/dimao/tickets",
+    "folder": "/tickets",
     "patterns": "*.txt"
   },
   "prometheus": {
