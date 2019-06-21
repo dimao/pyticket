@@ -13,5 +13,4 @@ build_image:
 pytest:
   stage: test
   script:
-    - sed -e "s/\${user}/1/" -e "s/\${password}/dog/" docker-compose.yml
     - docker-compose -f docker-compose.yml run --rm python-tests
