@@ -4,6 +4,7 @@ stages:
   - test
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker-compose --version
 build_image:
   stage: build
   script:
@@ -12,4 +13,4 @@ build_image:
 pytest:
   stage: test
   script:
-    - docker-compose -f docker-compose-dev.yml run --rm
+    - docker-compose -f docker-compose-dev.yml run python-tests
