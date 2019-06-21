@@ -1,5 +1,6 @@
 import json
 import logging
+import socket
 from datetime import timedelta
 from wsgiref.simple_server import make_server
 
@@ -39,10 +40,12 @@ if __name__ == '__main__':
 
 
     def prom_app(environ, start_fn):
+        fqdn = socket.getfqdn()
         if environ['PATH_INFO'] == '/metrics':
             return metrics_app(environ, start_fn)
         start_fn('200 OK', [])
-        return [b'<a href="http://localhost:9090/metrics">metrics<a>']
+        return [b'<a href="http://{}:9090/metrics">metrics<a>'.decode().format(
+            fqdn).encode()]  # decode bytes to string, interpolate variable and encode again
 
 
     prom_port = config['prometheus']['port']

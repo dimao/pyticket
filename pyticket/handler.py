@@ -65,7 +65,7 @@ class TicketsHandler(PatternMatchingEventHandler):
     @PROCESS_REQUEST_TIME.time()  # prometheus function execution time
     def process(self, event):
 
-        if self.next_game_place != '"Борисов-Арена"':  # TODO: change this to ==
+        if self.next_game_place == '"Борисов-Арена"':
             logger.info(event.src_path)
             with open(event.src_path, 'r') as file:
                 barcodes = file.readlines()
