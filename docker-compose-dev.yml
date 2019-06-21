@@ -10,6 +10,6 @@ services:
     image: registry.intes.by/dimao/pyticket:dev
     volumes:
       - ./config.json/:/pyticket/config.json
-    entrypoint: ls
+    entrypoint: python3 -m pytest tests
     depends_on:
       - python

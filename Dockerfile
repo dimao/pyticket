@@ -1,6 +1,7 @@
 FROM python:3.7-slim
 RUN mkdir /pyticket /tickets
 COPY pyticket /pyticket
+COPY tests /tests
 COPY requirements.txt /
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
