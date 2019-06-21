@@ -7,7 +7,7 @@ services:
 #    entrypoint: /docker-entrypoint.sh
 
   python-tests:
-    image: registry.gitlab.com/mycompany/myproject/python:dev
+    image: registry.intes.by/dimao/pyticket:dev
     volumes:
       - ./config.json/:/pyticket/config.json
     entrypoint: python3 -m pytest tests
