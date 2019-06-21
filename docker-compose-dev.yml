@@ -10,6 +10,6 @@ services:
     image: registry.intes.by/dimao/pyticket:dev
     volumes:
       - ./config.json/:/pyticket/config.json
-    entrypoint: cd ../ && ls
+    entrypoint: ls
     depends_on:
       - python
