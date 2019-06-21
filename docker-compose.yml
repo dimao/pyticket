@@ -1,0 +1,22 @@
+version: '2'
+services:
+  ftp_sync:
+    container_name: ftp-sync
+    image: registry.intes.by/dimao/ftp-sync:f85605ef3c6650189905e5358d2e9986f99072dc
+    environment:
+      - USER=
+      - PASSWORD=
+      - SERVER=
+      - CHECK_INTERVAL=5
+    volumes:
+      - /home/dimao/tickets:/tickets
+    restart: always
+
+  python-tests:
+    image: registry.intes.by/dimao/pyticket:dev
+    volumes:
+      - ./config.json/:/config.json
+    entrypoint: python3 -m pytest tests
+    depends_on:
+      - ftp_sync
+    restart: always
