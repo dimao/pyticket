@@ -13,4 +13,4 @@ build_image:
 pytest:
   stage: test
   script:
-    - docker-compose -f docker-compose.yml run python-tests --rm
+    - docker-compose -f docker-compose.yml run --rm python-tests
