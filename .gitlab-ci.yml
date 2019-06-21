@@ -8,7 +8,7 @@ before_script:
 build_image:
   stage: build
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE":dev .
+    - docker build --pull -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME" .
     - docker push "$CI_REGISTRY_IMAGE"
 pytest:
   stage: test
