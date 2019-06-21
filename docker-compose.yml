@@ -18,7 +18,7 @@ services:
       - ./config.json/:/config.json
       - /intes/import-ticket/tickets:/tickets
     ports:
-      - "9090: 9090"
+      - "9090:9090"
     entrypoint: python3 -m pytest tests
     depends_on:
       - ftp_sync
