@@ -14,6 +14,7 @@ services:
 
   pyticket:
     image: registry.intes.by/dimao/pyticket:master
+    container_name: import-ticket
     volumes:
       - ./config.json/:/config.json
       - /intes/import-ticket/tickets:/tickets
