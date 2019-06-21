@@ -19,7 +19,7 @@ services:
       - /intes/import-ticket/tickets:/tickets
     ports:
       - "9090:9090"
-    entrypoint: python3 -m pytest tests
+    entrypoint: python3 -m pyticket
     depends_on:
       - ftp_sync
     restart: always
