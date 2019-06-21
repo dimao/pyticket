@@ -9,8 +9,8 @@ from watchdog.events import PatternMatchingEventHandler
 from zeep.settings import Settings
 from zeep.transports import Transport
 
-from import_ticket import ImportTicket
-from scrape import Scrape
+from pyticket.import_ticket import ImportTicket
+from pyticket.scrape import Scrape
 
 with open('config.json', 'r') as f:
     config = json.load(f)

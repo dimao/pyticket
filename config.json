@@ -1,0 +1,17 @@
+{
+  "wsdl": {
+    "url": "http://10.0.7.8:8090/GnrtBT6NetWcfServiceLibrary.GnrtBT6NetWcfService/?wsdl"
+  },
+  "site": {
+    "url": "https://fcbate.by/fan-zone",
+    "scrape_interval": 60
+  },
+  "game": {
+    "time_shift": 2,
+    "folder": "/tickets",
+    "patterns": "*.txt"
+  },
+  "prometheus": {
+    "port": 9090
+  }
+}

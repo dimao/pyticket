@@ -7,7 +7,7 @@ from prometheus_client import make_wsgi_app
 from timeloop import Timeloop
 from watchdog.observers import Observer
 
-from handler import TicketsHandler
+from pyticket.handler import TicketsHandler
 
 if __name__ == '__main__':
 
