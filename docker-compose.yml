@@ -4,8 +4,8 @@ services:
     container_name: ftp-sync
     image: registry.intes.by/dimao/ftp-sync:f85605ef3c6650189905e5358d2e9986f99072dc
     environment:
-      - USER=
-      - PASSWORD=
+      - USER=$user
+      - PASSWORD=$password
       - SERVER=
       - CHECK_INTERVAL=5
     volumes:
