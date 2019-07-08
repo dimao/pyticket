@@ -1,58 +1,49 @@
-import json
 import logging
 import socket
-from datetime import timedelta
-from wsgiref.simple_server import make_server
+import os
+from gevent.pywsgi import WSGIServer
 
 from prometheus_client import make_wsgi_app
-from timeloop import Timeloop
 from watchdog.observers import Observer
 
 from pyticket.handler import TicketsHandler
 
 if __name__ == '__main__':
 
-    with open('config.json', 'r') as f:
-        config = json.load(f)
-    path = config['game']['folder']
+    path = os.environ.get('MON_FOLDER')
 
     observer = Observer()
     tickets_handler = TicketsHandler()
-    tickets_handler.scrape()  # 1st scrape
-    timeloop = Timeloop()
 
-    scrape_interval = config['site']['scrape_interval']
-
-
-    @timeloop.job(interval=timedelta(seconds=int(scrape_interval)))  # scraping with interval
-    def timeloop_job():
-        tickets_handler.scrape()
-
-
-    timeloop.start()  # start timeloop thread
-    logger = logging.getLogger('handler')
-    logger.info(f'Monitoring {path} directory with {scrape_interval} seconds interval')
+    logger = logging.getLogger(__name__)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    logger.setLevel(logging.INFO)
+    logger.info(f'Monitoring {path} directory')
 
     observer.schedule(tickets_handler, path=path, recursive=False)
     observer.start()
 
     metrics_app = make_wsgi_app()
 
+    prom_port = int(os.environ.get('PROM_PORT'))
+    fqdn = socket.getfqdn()
 
     def prom_app(environ, start_fn):
-        fqdn = socket.getfqdn()
+
         if environ['PATH_INFO'] == '/metrics':
             return metrics_app(environ, start_fn)
         start_fn('200 OK', [])
-        return [b'<a href="http://{}:9090/metrics">metrics<a>'.decode().format(
-            fqdn).encode()]  # decode bytes to string, interpolate variable and encode again
+        return [b'<a href="http://{}:{}/metrics">metrics<a>'.decode().format(
+            fqdn, prom_port).encode()]  # decode bytes to string, interpolate variable and encode again
 
-
-    prom_port = config['prometheus']['port']
 
     try:
-        httpd = make_server('0.0.0.0', prom_port, prom_app)  # prometheus metrics endpoint
-        httpd.serve_forever()
+        logger.info(f"Prometheus endpoint on http://{fqdn}:{prom_port}/metrics")
+        WSGIServer(('0.0.0.0', prom_port), prom_app, log=logger).serve_forever()
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
