@@ -23,7 +23,7 @@ services:
     restart: always
   
   pyticket:
-    image: registry.intes.by/dimao/pyticket:v0.2.2
+    image: registry.intes.by/dimao/pyticket:v0.2.3
     container_name: import-ticket
     hostname: import-ticket
     environment:
@@ -43,7 +43,7 @@ services:
     restart: always
 
   fapi-scrape:
-    image: registry.intes.by/dimao/fapi-scrape:v0.5.3
+    image: registry.intes.by/dimao/fapi-scrape:v0.5.4
     container_name: fapi-scrape
     environment:
       - SITE_URL=https://fcbate.by/fan-zone
