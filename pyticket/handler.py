@@ -28,24 +28,27 @@ c = Counter('imported_file', 'File imported',
 PROCESS_REQUEST_TIME = Summary('files_imported_total', 'Files imported total')
 c1 = Counter('imported_barcode', 'Barcode imported', ['barcode'])
 
-event = json.loads(requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_event/").text)
-next_game_place = json.loads(
-    requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_place").text)
-
 
 class TicketsHandler(PatternMatchingEventHandler):
 
     @PROCESS_REQUEST_TIME.time()  # prometheus function execution time
     def process(self, fs_event):
-
-        if dict(next_game_place)['next_game_place'] == '"Борисов-Арена"':
-            logger.info(fs_event.src_path)
-            with open(fs_event.src_path, 'r') as file:
-                barcodes = file.readlines()
-                for barcode_ in barcodes:
-                    import_ticket.import_ticket(**event, barcode_=barcode_)
-                    c.labels(filename=file.name).inc(1)
-                    c1.labels(barcode=barcode_.rstrip()).inc(1)
+        event = json.loads(requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_event/").text)
+        next_game_place = json.loads(
+            requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_place").text)
+        if event and next_game_place is not None:
+            if dict(next_game_place)['next_game_place'] == '"Борисов-Арена"':
+                logger.info(fs_event.src_path)
+                with open(fs_event.src_path, 'r') as file:
+                    barcodes = file.readlines()
+                    for barcode_ in barcodes:
+                        import_ticket.import_ticket(**event, barcode_=barcode_)
+                        c.labels(filename=file.name).inc(1)
+                        c1.labels(barcode=barcode_.rstrip()).inc(1)
+            else:
+                logger.warning(f'Place is {next_game_place}')
+        else:
+            logger.warning('Waiting for scrape...')
 
     def on_created(self, fs_event):
         self.process(fs_event)
