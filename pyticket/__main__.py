@@ -2,7 +2,6 @@ import logging
 import socket
 import os
 from gevent.pywsgi import WSGIServer
-
 from prometheus_client import make_wsgi_app
 from watchdog.observers import Observer
 
@@ -39,7 +38,6 @@ if __name__ == '__main__':
         start_fn('200 OK', [])
         return [b'<a href="http://{}:{}/metrics">metrics<a>'.decode().format(
             fqdn, prom_port).encode()]  # decode bytes to string, interpolate variable and encode again
-
 
     try:
         logger.info(f"Prometheus endpoint on http://{fqdn}:{prom_port}/metrics")

@@ -14,7 +14,6 @@ wsdl = os.environ.get('WSDL_URL')
 transport = Transport(timeout=10)
 settings = Settings(strict=False)  # because of invalid xml response when calling UpdateEventSession
 import_ticket = ImportTicket(wsdl, transport, settings)
-import_ticket.client.service.GetCurrentVersion()
 
 logger = logging.getLogger(__name__)
 ch = logging.StreamHandler()
@@ -30,7 +29,8 @@ PROCESS_REQUEST_TIME = Summary('files_imported_total', 'Files imported total')
 c1 = Counter('imported_barcode', 'Barcode imported', ['barcode'])
 
 event = json.loads(requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_event/").text)
-next_game_place = json.loads(requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_place").text)
+next_game_place = json.loads(
+    requests.get(f"{os.environ.get('HOST_NAME')}:{int(os.environ.get('PORT'))}/get_place").text)
 
 
 class TicketsHandler(PatternMatchingEventHandler):

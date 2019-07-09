@@ -4,7 +4,6 @@ from zeep import Client
 
 
 class ImportTicket:
-
     logger = logging.getLogger(__name__)
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
