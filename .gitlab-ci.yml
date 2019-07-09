@@ -1,16 +1,21 @@
 ---
+variables:
+  WSDL_URL: http://10.0.7.8:8090/GnrtBT6NetWcfServiceLibrary.GnrtBT6NetWcfService/?wsdl
 stages:
   - build
   - test
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  - docker-compose --version
 build_image:
   stage: build
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_REF_NAME" .
+    - docker build --pull -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" .
     - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - tags
 pytest:
   stage: test
   script:
-    - docker-compose -f docker-compose.yml run --rm python-tests
+    - docker run -e WSDL_URL="$WSDL_URL" "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" python3 -m pytest tests
+  only:
+    - tags
