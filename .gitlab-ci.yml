@@ -11,7 +11,11 @@ build_image:
   script:
     - docker build --pull -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" .
     - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - tags
 pytest:
   stage: test
   script:
     - docker run -e WSDL_URL="$WSDL_URL" "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" python3 -m pytest tests
+  only:
+    - tags
